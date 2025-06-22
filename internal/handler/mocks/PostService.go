@@ -49,26 +49,6 @@ func (_m *PostService) DeletePost(id int) error {
 	return r0
 }
 
-// GetAllPosts provides a mock function with no fields
-func (_m *PostService) GetAllPosts() []model.Post {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllPosts")
-	}
-
-	var r0 []model.Post
-	if rf, ok := ret.Get(0).(func() []model.Post); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]model.Post)
-		}
-	}
-
-	return r0
-}
-
 // GetPostByID provides a mock function with given fields: id
 func (_m *PostService) GetPostByID(id int) (model.Post, error) {
 	ret := _m.Called(id)
@@ -95,6 +75,26 @@ func (_m *PostService) GetPostByID(id int) (model.Post, error) {
 	}
 
 	return r0, r1
+}
+
+// GetPostsPaginated provides a mock function with given fields: limit, offset
+func (_m *PostService) GetPostsPaginated(limit int, offset int) []model.Post {
+	ret := _m.Called(limit, offset)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetPostsPaginated")
+	}
+
+	var r0 []model.Post
+	if rf, ok := ret.Get(0).(func(int, int) []model.Post); ok {
+		r0 = rf(limit, offset)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]model.Post)
+		}
+	}
+
+	return r0
 }
 
 // UpdatePost provides a mock function with given fields: id, updatedPost

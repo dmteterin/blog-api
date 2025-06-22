@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 )
 
@@ -25,12 +24,9 @@ func main() {
 	postService := service.NewPostService(postStorage)
 	postHandler := handler.NewPostHandler(postService)
 
-	r := mux.NewRouter()
-	postHandler.RegisterRoutes(r)
-
 	srv := &http.Server{
 		Addr:    port,
-		Handler: r,
+		Handler: handler.NewRouter(postHandler, logger),
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

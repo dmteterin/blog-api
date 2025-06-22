@@ -60,7 +60,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestGetAll(t *testing.T) {
+func TestGetPaginated(t *testing.T) {
 	logger := zerolog.Nop()
 	store := NewInMemoryStorage(logger, shouldSeed)
 
@@ -74,7 +74,7 @@ func TestGetAll(t *testing.T) {
 		store.Create(np)
 	}
 
-	got := store.GetAll()
+	got := store.GetPaginated(10, 0)
 	if len(got) != len(postsToCreate) {
 		t.Fatalf("Expected %d posts, got %d", len(postsToCreate), len(got))
 	}
@@ -90,6 +90,15 @@ func TestGetAll(t *testing.T) {
 		if p.Author != expected.Author {
 			t.Errorf("Expected author %q, got %q", expected.Author, p.Author)
 		}
+	}
+
+	partial := store.GetPaginated(1, 1)
+	if len(partial) != 1 {
+		t.Fatalf("Expected 1 post, got %d", len(partial))
+	}
+	expected := postsToCreate[len(postsToCreate)-1-1]
+	if partial[0].Title != expected.Title {
+		t.Errorf("Expected title %q, got %q", expected.Title, partial[0].Title)
 	}
 }
 

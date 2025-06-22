@@ -9,8 +9,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	defaultLimit  = 100
+	defaultOffset = 0
+)
+
 type PostService interface {
-	GetAllPosts() []model.Post
+	GetPostsPaginated(limit, offset int) []model.Post
 	GetPostByID(id int) (model.Post, error)
 	CreatePost(newPost model.NewPost) model.Post
 	UpdatePost(id int, updatedPost model.NewPost) (model.Post, error)
@@ -28,7 +33,32 @@ func NewPostHandler(s PostService) *PostHandler {
 }
 
 func (h *PostHandler) getPosts(w http.ResponseWriter, r *http.Request) {
-	posts := h.service.GetAllPosts()
+	query := r.URL.Query()
+
+	limitStr := query.Get("limit")
+	offsetStr := query.Get("offset")
+
+	limit := defaultLimit
+	offset := defaultOffset
+
+	var err error
+	if limitStr != "" {
+		limit, err = strconv.Atoi(limitStr)
+		if err != nil || limit < 1 {
+			http.Error(w, "Invalid limit parameter", http.StatusBadRequest)
+			return
+		}
+	}
+
+	if offsetStr != "" {
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil || offset < 0 {
+			http.Error(w, "Invalid offset parameter", http.StatusBadRequest)
+			return
+		}
+	}
+
+	posts := h.service.GetPostsPaginated(limit, offset)
 	respondWithJSON(w, http.StatusOK, posts)
 }
 

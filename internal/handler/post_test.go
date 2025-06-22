@@ -19,7 +19,7 @@ func TestGetPosts(t *testing.T) {
 	handler := NewPostHandler(mockService)
 
 	expected := []model.Post{{ID: 1, Title: "Go", Content: "Post", Author: "Alice"}}
-	mockService.On("GetAllPosts").Return(expected)
+	mockService.On("GetPostsPaginated", 100, 0).Return(expected)
 
 	req := httptest.NewRequest(http.MethodGet, "/posts", nil)
 	rr := httptest.NewRecorder()

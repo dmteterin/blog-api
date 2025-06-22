@@ -3,7 +3,7 @@ package service
 import "blog-api/internal/model"
 
 type PostStorage interface {
-	GetAll() []model.Post
+	GetPaginated(limit, offset int) []model.Post
 	GetByID(id int) (model.Post, error)
 	Create(newPost model.NewPost) model.Post
 	Update(id int, updatedPost model.NewPost) (model.Post, error)
@@ -20,8 +20,8 @@ func NewPostService(s PostStorage) *postService {
 	}
 }
 
-func (s *postService) GetAllPosts() []model.Post {
-	return s.storage.GetAll()
+func (s *postService) GetPostsPaginated(limit, offset int) []model.Post {
+	return s.storage.GetPaginated(limit, offset)
 }
 
 func (s *postService) GetPostByID(id int) (model.Post, error) {

@@ -42,7 +42,7 @@ func NewInMemoryStorage(l zerolog.Logger, shouldSeed bool) *inMemoryStorage {
 	return s
 }
 
-func (s *inMemoryStorage) GetAll() []model.Post {
+func (s *inMemoryStorage) GetPaginated(limit, offset int) []model.Post {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -51,12 +51,18 @@ func (s *inMemoryStorage) GetAll() []model.Post {
 		postList = append(postList, post)
 	}
 
-	// Default sorting - by ID Desc
+	// Sort by ID Desc
 	sort.Slice(postList, func(i, j int) bool {
 		return postList[i].ID > postList[j].ID
 	})
 
-	return postList
+	if offset > len(postList) {
+		return []model.Post{}
+	}
+
+	end := min(offset+limit, len(postList))
+
+	return postList[offset:end]
 }
 
 func (s *inMemoryStorage) GetByID(id int) (model.Post, error) {
